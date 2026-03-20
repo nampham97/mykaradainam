@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import com.mykaradainam.navigation.NavGraph
 import com.mykaradainam.ui.theme.MyKaraDainamTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -18,7 +19,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyKaraDainamTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    // NavGraph will be added in Task 9
+                    NavGraph()
                 }
             }
         }

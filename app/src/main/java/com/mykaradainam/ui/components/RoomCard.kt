@@ -148,7 +148,7 @@ fun RoomCard(
             ) {
                 Icon(Icons.Default.PlayArrow, contentDescription = null, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(4.dp))
-                Text("Bắt đầu", fontSize = 12.sp, fontWeight = FontWeight.SemiBold)
+                Text("Bắt đầu", fontSize = 13.sp, fontWeight = FontWeight.Bold)
             }
         }
     }

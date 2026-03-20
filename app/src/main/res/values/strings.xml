@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MyKaraDainam</string>
+    <string name="room_1">Phòng 1</string>
+    <string name="room_2">Phòng 2</string>
+    <string name="start">Bắt đầu</string>
+    <string name="finish">Kết thúc</string>
+    <string name="invoice">Hóa đơn</string>
+    <string name="reports">Báo cáo</string>
+    <string name="settings">Cài đặt</string>
+    <string name="save">Lưu</string>
+    <string name="cancel">Hủy</string>
+    <string name="retry">Thử lại</string>
+    <string name="no_connection">Không có kết nối</string>
+    <string name="processing">Đang xử lý...</string>
+</resources>

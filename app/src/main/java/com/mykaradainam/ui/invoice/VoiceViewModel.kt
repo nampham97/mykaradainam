@@ -4,10 +4,12 @@ package com.mykaradainam.ui.invoice
 import android.content.Context
 import android.media.MediaRecorder
 import android.os.Build
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mykaradainam.data.remote.groq.InvoiceParseResult
 import com.mykaradainam.data.repository.GroqRepository
+import com.mykaradainam.data.repository.SharedInvoiceDataHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.*
@@ -38,6 +40,8 @@ class VoiceViewModel @Inject constructor(
     private var recordingStartTime = 0L
 
     fun startRecording() {
+        if (recorder != null) return
+        audioFile?.delete()
         val file = File(context.cacheDir, "voice_${System.currentTimeMillis()}.m4a")
         audioFile = file
 
@@ -80,6 +84,7 @@ class VoiceViewModel @Inject constructor(
                 sharedInvoiceData.set(result)
                 _uiState.update { it.copy(isProcessing = false, parseResult = result) }
             } catch (e: Exception) {
+                Log.e("VoiceViewModel", "Failed to process audio", e)
                 _uiState.update {
                     it.copy(isProcessing = false, error = "Không thể xử lý giọng nói. Thử lại hoặc nhập thủ công.")
                 }
@@ -92,6 +97,7 @@ class VoiceViewModel @Inject constructor(
     }
 
     override fun onCleared() {
+        super.onCleared()
         recorder?.release()
         audioFile?.delete()
     }

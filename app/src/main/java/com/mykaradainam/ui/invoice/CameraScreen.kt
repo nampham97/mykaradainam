@@ -13,6 +13,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -32,6 +33,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mykaradainam.ui.components.LoadingButton
 import com.mykaradainam.ui.theme.CatppuccinMocha
+import android.util.Log
 import java.nio.ByteBuffer
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -141,6 +143,9 @@ fun CameraScreen(
                                         image.close()
                                         viewModel.onPhotoCaptured(bitmap)
                                     }
+                                    override fun onError(exception: ImageCaptureException) {
+                                        viewModel.onCaptureError()
+                                    }
                                 }
                             )
                         },
@@ -215,6 +220,8 @@ private fun imageProxyToBitmap(image: ImageProxy): Bitmap {
     val rotation = image.imageInfo.rotationDegrees
     return if (rotation != 0) {
         val matrix = Matrix().apply { postRotate(rotation.toFloat()) }
-        Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+        val rotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+        bitmap.recycle()
+        rotated
     } else bitmap
 }

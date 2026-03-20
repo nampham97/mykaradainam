@@ -2,10 +2,12 @@
 package com.mykaradainam.ui.invoice
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mykaradainam.data.remote.groq.InvoiceParseResult
 import com.mykaradainam.data.repository.GroqRepository
+import com.mykaradainam.data.repository.SharedInvoiceDataHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -40,11 +42,16 @@ class CameraViewModel @Inject constructor(
                 sharedInvoiceData.set(result)
                 _uiState.update { it.copy(isProcessing = false, parseResult = result) }
             } catch (e: Exception) {
+                Log.e("CameraViewModel", "Failed to process image", e)
                 _uiState.update {
                     it.copy(isProcessing = false, error = "Không thể xử lý ảnh. Thử lại hoặc nhập thủ công.")
                 }
             }
         }
+    }
+
+    fun onCaptureError() {
+        _uiState.update { it.copy(error = "Không thể chụp ảnh. Thử lại.") }
     }
 
     fun retry() {
@@ -53,5 +60,10 @@ class CameraViewModel @Inject constructor(
 
     fun clearError() {
         _uiState.update { it.copy(error = null) }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        _uiState.value.capturedBitmap?.recycle()
     }
 }

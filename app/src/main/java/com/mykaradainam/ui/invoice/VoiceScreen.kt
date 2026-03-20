@@ -1,6 +1,9 @@
 // ui/invoice/VoiceScreen.kt
 package com.mykaradainam.ui.invoice
 
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -18,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import com.mykaradainam.ui.components.LoadingButton
 import com.mykaradainam.ui.components.TimerDisplay
 import com.mykaradainam.ui.theme.CatppuccinMocha
@@ -35,14 +40,14 @@ fun VoiceScreen(
 
     var hasMicPermission by remember { mutableStateOf(false) }
     val permissionLauncher = rememberLauncherForActivityResult(
-        androidx.activity.result.contract.ActivityResultContracts.RequestPermission()
+        ActivityResultContracts.RequestPermission()
     ) { granted -> hasMicPermission = granted }
-    val context = androidx.compose.ui.platform.LocalContext.current
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-        hasMicPermission = androidx.core.content.ContextCompat.checkSelfPermission(
+        hasMicPermission = ContextCompat.checkSelfPermission(
             context, android.Manifest.permission.RECORD_AUDIO
-        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        ) == PackageManager.PERMISSION_GRANTED
         if (!hasMicPermission) permissionLauncher.launch(android.Manifest.permission.RECORD_AUDIO)
     }
 
@@ -93,9 +98,10 @@ fun VoiceScreen(
                 Spacer(Modifier.height(16.dp))
                 Text("Đang xử lý giọng nói...", color = CatppuccinMocha.Overlay1)
             } else if (state.error != null) {
+                val error = state.error ?: ""
                 Icon(Icons.Default.ErrorOutline, null, tint = CatppuccinMocha.Red, modifier = Modifier.size(48.dp))
                 Spacer(Modifier.height(8.dp))
-                Text(state.error!!, color = CatppuccinMocha.Red, fontSize = 13.sp)
+                Text(error, color = CatppuccinMocha.Red, fontSize = 13.sp)
                 Spacer(Modifier.height(16.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     LoadingButton("Thử lại", onClick = { viewModel.retry() }, containerColor = CatppuccinMocha.Mauve)

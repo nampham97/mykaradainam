@@ -26,6 +26,7 @@ import com.mykaradainam.ui.components.RoomCard
 import com.mykaradainam.ui.theme.CatppuccinMocha
 import com.mykaradainam.util.formatDate
 import com.mykaradainam.util.formatVndShort
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,9 +50,10 @@ fun HomeScreen(
                         OutlinedButton(
                             onClick = {
                                 viewModel.dismissRoomPicker()
+                                val sid = room.sessionId ?: return@OutlinedButton
                                 val action = state.pendingAction
-                                if (action == "camera") onNavigateToCamera(room.sessionId!!, room.roomNumber)
-                                else onNavigateToVoice(room.sessionId!!, room.roomNumber)
+                                if (action == "camera") onNavigateToCamera(sid, room.roomNumber)
+                                else onNavigateToVoice(sid, room.roomNumber)
                             },
                             modifier = Modifier.fillMaxWidth()
                         ) {
@@ -167,7 +169,9 @@ fun HomeScreen(
                     onClick = {
                         val activeRooms = viewModel.getActiveRooms()
                         when (activeRooms.size) {
-                            1 -> onNavigateToCamera(activeRooms[0].sessionId!!, activeRooms[0].roomNumber)
+                            1 -> activeRooms[0].sessionId?.let { sid ->
+                                onNavigateToCamera(sid, activeRooms[0].roomNumber)
+                            }
                             2 -> viewModel.requestQuickAction("camera")
                             else -> scope.launch { snackbarHostState.showSnackbar("Chưa có phòng hoạt động") }
                         }
@@ -182,9 +186,11 @@ fun HomeScreen(
                     onClick = {
                         val activeRooms = viewModel.getActiveRooms()
                         when (activeRooms.size) {
-                            1 -> onNavigateToVoice(activeRooms[0].sessionId!!, activeRooms[0].roomNumber)
+                            1 -> activeRooms[0].sessionId?.let { sid ->
+                                onNavigateToVoice(sid, activeRooms[0].roomNumber)
+                            }
                             2 -> viewModel.requestQuickAction("voice")
-                            else -> {}
+                            else -> scope.launch { snackbarHostState.showSnackbar("Chưa có phòng hoạt động") }
                         }
                     }
                 )
